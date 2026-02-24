@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "nome": "Granulado"
+  },
+  {
+    "id": 2,
+    "nome": "Calda de Chocolate"
+  },
+  {
+    "id": 3,
+    "nome": "Calda de Morango"
+  },
+  {
+    "id": 4,
+    "nome": "Paçoca"
+  },
+  {
+    "id": 5,
+    "nome": "Leite Condensado"
+  },
+  {
+    "id": 6,
+    "nome": "Castanha"
+  },
+  {
+    "id": 7,
+    "nome": "Leite em Pó"
+  },
+  {
+    "id": 8,
+    "nome": "Granola"
+  },
+  {
+    "id": 9,
+    "nome": "Banana"
+  },
+  {
+    "id": 10,
+    "nome": "Morango"
+  }
+]
