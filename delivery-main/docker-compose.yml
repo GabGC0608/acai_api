@@ -8,16 +8,36 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: delivery
-      POSTGRES_PASSWORD: delivery123
+      POSTGRES_USER: gabriel
+      POSTGRES_PASSWORD: Gc-71602003
       POSTGRES_DB: delivery_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U delivery"]
+      test: ["CMD-SHELL", "pg_isready -U gabriel -d delivery_db"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - delivery-network
+
+  web:
+    build: .
+    container_name: delivery-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - POSTGRES_PRISMA_URL=postgresql://gabriel:Gc-71602003@postgres:5432/delivery_db?schema=public
+      - DATABASE_URL=postgresql://gabriel:Gc-71602003@postgres:5432/delivery_db?schema=public
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "pnpm prisma generate --schema=./prisma/schema.prisma &&
+             pnpm prisma migrate deploy --schema=./prisma/schema.prisma &&
+             pnpm start"
     networks:
       - delivery-network
 
