@@ -84,6 +84,7 @@ export default function LoginPage() {
   }
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4 md:p-10 flex items-center justify-center">
       <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden grid md:grid-cols-2">
         {/* Resumo */}

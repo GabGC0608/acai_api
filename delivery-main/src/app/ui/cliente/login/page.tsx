@@ -43,6 +43,17 @@ export default function LoginClientePage() {
   };
 
   return (
+    <>
+      {/* Fundo com imagens deslizantes */}
+      <div className="background-slideshow">
+        <img src="/images/background/logo.png" alt="Fundo 1" />
+        
+      </div>
+      
+      {/* Overlay gradiente */}
+      <div className="background-overlay" />
+      
+      {/* Conteúdo principal */}
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
         <h1 className="text-3xl font-bold mb-2 text-purple-700 text-center">Entrar</h1>
@@ -134,6 +145,7 @@ export default function LoginClientePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
