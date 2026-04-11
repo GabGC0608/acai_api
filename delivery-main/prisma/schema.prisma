@@ -7,6 +7,8 @@ datasource db {
   url       = env("POSTGRES_PRISMA_URL") // Pooled connection for queries
   // Usando a mesma URL para migrations (defina POSTGRES_URL_NON_POOLING se preferir, mas não é obrigatório).
   directUrl = env("POSTGRES_URL_NON_POOLED")
+
+  
 }
 
 model Adicional {
@@ -37,19 +39,19 @@ model Cliente {
 }
 
 model Pedido {
-  id              BigInt          @id @default(autoincrement())
-  cliente         Cliente         @relation(fields: [clienteId], references: [id])
-  clienteId       BigInt
-  sabores         PedidoSabor[]
-  adicionais      PedidoAdicional[]
-  tamanho         String
-  valorTotal      Float
-  formaPagamento  String
-  enderecoEntrega String
-  status          String          @default("Pendente")
-  cupomCodigo     String?
-  descontoAplicado Float          @default(0)
-  createdAt       DateTime        @default(now())
+  id                BigInt           @id @default(autoincrement())
+  cliente           Cliente          @relation(fields: [clienteId], references: [id])
+  clienteId         BigInt
+  sabores           PedidoSabor[]
+  adicionais        PedidoAdicional[]
+  tamanho           String
+  valorTotal        Float
+  formaPagamento    String
+  enderecoEntrega   String
+  status            String           @default("Pendente")
+  cupomCodigo       String?
+  descontoAplicado  Float            @default(0)
+  createdAt         DateTime         @default(now())
 }
 
 model PedidoSabor {
@@ -74,7 +76,7 @@ model Cupom {
   id          BigInt   @id @default(autoincrement())
   codigo      String   @unique
   descricao   String?
-  tipo        String   // percentual ou valor_fixo
+  tipo        String
   valor       Float
   valorMinimo Float    @default(0)
   usoMaximo   Int?
@@ -86,15 +88,15 @@ model Cupom {
 }
 
 model Favorito {
-  id          BigInt            @id @default(autoincrement())
-  cliente     Cliente           @relation(fields: [clienteId], references: [id], onDelete: Cascade)
-  clienteId   BigInt
-  nome        String
-  tamanho     String
-  preco       Float
-  sabores     FavoritoSabor[]
-  adicionais  FavoritoAdicional[]
-  createdAt   DateTime          @default(now())
+  id         BigInt              @id @default(autoincrement())
+  cliente    Cliente             @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  clienteId  BigInt
+  nome       String
+  tamanho    String
+  preco      Float
+  sabores    FavoritoSabor[]
+  adicionais FavoritoAdicional[]
+  createdAt  DateTime            @default(now())
 }
 
 model FavoritoSabor {
@@ -107,10 +109,10 @@ model FavoritoSabor {
 }
 
 model FavoritoAdicional {
-  favorito     Favorito   @relation(fields: [favoritoId], references: [id], onDelete: Cascade)
-  favoritoId   BigInt
-  adicional    Adicional  @relation(fields: [adicionalId], references: [id], onDelete: Cascade)
-  adicionalId  BigInt
+  favorito    Favorito  @relation(fields: [favoritoId], references: [id], onDelete: Cascade)
+  favoritoId  BigInt
+  adicional   Adicional @relation(fields: [adicionalId], references: [id], onDelete: Cascade)
+  adicionalId BigInt
 
   @@id([favoritoId, adicionalId])
 }
@@ -119,7 +121,7 @@ model FidelidadeTransacao {
   id        BigInt   @id @default(autoincrement())
   cliente   Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
   clienteId BigInt
-  tipo      String   // earn | redeem
+  tipo      String
   pontos    Int
   descricao String?
   createdAt DateTime @default(now())
