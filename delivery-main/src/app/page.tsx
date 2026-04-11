@@ -33,7 +33,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
-                onClick={() => router.push('/ui/pedido?tamanho')}
+                onClick={() => router.push('/ui/pedido/tamanho')}
                 className="bg-gradient-to-r from-purple-600 to-green-600 hover:from-purple-700 hover:to-green-700 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-xl transition-all duration-300 transform hover:scale-105  z-20"
               >
                 Fazer Pedido

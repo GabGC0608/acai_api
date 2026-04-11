@@ -12,7 +12,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "create-admin": "ts-node scripts/create-admin.ts"
+    "create-admin": "ts-node scripts/create-admin.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -36,6 +37,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/supertest": "^6.0.3",
+    "husky": "^9.1.7",
     "jest": "^30.2.0",
     "prisma": "^6.19.0",
     "supertest": "^7.1.4",

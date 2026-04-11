@@ -7,7 +7,7 @@ echo "🔐 Criar Admin em Produção"
 echo "================================"
 echo ""
 
-read -p "URL da aplicação (ex: https://seu-app.vercel.app): " APP_URL
+read -p "URL da aplicação (ex: https://flour-yrs-collections-recording.trycloudflare.com): " APP_URL
 read -p "Secret do admin (ADMIN_SECRET): " ADMIN_SECRET
 read -p "Email do admin: " EMAIL
 read -p "Nome do admin: " NAME
