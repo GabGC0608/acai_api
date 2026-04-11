@@ -6,7 +6,7 @@ datasource db {
   provider  = "postgresql"
   url       = env("POSTGRES_PRISMA_URL") // Pooled connection for queries
   // Usando a mesma URL para migrations (defina POSTGRES_URL_NON_POOLING se preferir, mas não é obrigatório).
-  directUrl = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLED")
 }
 
 model Adicional {
