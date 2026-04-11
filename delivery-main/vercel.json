@@ -1,6 +1,6 @@
 {
-  "buildCommand": "prisma generate && prisma migrate deploy && next build",
-  "outputDirectory": ".next",
-  "devCommand": "next dev",
-  "installCommand": "pnpm install"
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "buildCommand": "npm run vercel-build",
+  "devCommand": "npm run dev"
 }
