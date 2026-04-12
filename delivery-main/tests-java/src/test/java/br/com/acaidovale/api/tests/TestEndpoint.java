@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestEndpoint {
 
-    private static final String BASE_URI = "http://localhost";
+    private static final String BASE_URI = "https://acai-5ir2mi1gs-gabrielgc0608-2281s-projects.vercel.app";
     private static final int PORT = 3000;
 
     private Long clienteId;
