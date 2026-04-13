@@ -17,6 +17,13 @@ export default function LoginPage() {
   const isAuthenticated = status === "authenticated";
   const canContinue = isAuthenticated && !!nome && !!email;
 
+  // Redirecionar para endereço se já está autenticado
+  useEffect(() => {
+    if (status === "authenticated" && pedido.potes.length > 0) {
+      router.push("/ui/pedido/endereco");
+    }
+  }, [status, pedido.potes.length, router]);
+
   useEffect(() => {
     if (session?.user) {
       const sNome = session.user.name || "";

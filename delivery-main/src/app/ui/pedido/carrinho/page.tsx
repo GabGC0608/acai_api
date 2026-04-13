@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 export default function CarrinhoPage() {
   const { pedido, removerPote, aplicarCupom, removerCupom } = usePedido();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [codigoCupom, setCodigoCupom] = useState(pedido.cupom?.codigo || "");
   const [cupomMensagem, setCupomMensagem] = useState<string | null>(null);
   const [aplicandoCupom, setAplicandoCupom] = useState(false);
@@ -27,15 +27,16 @@ export default function CarrinhoPage() {
   };
 
   const handleFinalizar = () => {
-    if (!session && pedido.potes.length === 0) {
-      router.push("/ui/pedido/login");
+    if (pedido.potes.length === 0) {
       return;
     }
-    else if (pedido.potes.length === 0) {
+    // Se está autenticado: vai direto para endereço
+    // Se não está: vai para login
+    if (status === "authenticated") {
       router.push("/ui/pedido/endereco");
-      return;
+    } else {
+      router.push("/ui/pedido/login");
     }
-    
   };
 
   const handleAplicarCupom = async () => {
