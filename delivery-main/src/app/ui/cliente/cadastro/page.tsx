@@ -59,8 +59,21 @@ export default function CadastroClientePage() {
         return;
       }
       // Sucesso! Mostrar mensagem e redirecionar para login
-      setSuccess(true);
-      setTimeout(() => router.push('/login'), 2000);
+      // Fazer login automaticamente após criar a conta
+      const signInResult = await signIn('credentials', {
+        email,
+        password: senha,
+        redirect: false,
+      });
+
+      if (signInResult?.ok) {
+        setSuccess(true);
+        setTimeout(() => router.push('/'), 1500);
+      } else {
+        // Se falhar o login automático, redirecionar para login manual
+        setSuccess(true);
+        setTimeout(() => router.push('/login'), 2000);
+      }
     } catch (err) {
       setError('Erro ao conectar com o servidor');
       setLoading(false);

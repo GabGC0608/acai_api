@@ -27,8 +27,15 @@ export default function CarrinhoPage() {
   };
 
   const handleFinalizar = () => {
-    if (pedido.potes.length === 0) return;
-    router.push("/ui/pedido/login");
+    if (!session && pedido.potes.length === 0) {
+      router.push("/ui/pedido/login");
+      return;
+    }
+    else if (pedido.potes.length === 0) {
+      router.push("/ui/pedido/endereco");
+      return;
+    }
+    
   };
 
   const handleAplicarCupom = async () => {
