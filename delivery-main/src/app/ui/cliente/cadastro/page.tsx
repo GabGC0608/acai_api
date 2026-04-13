@@ -8,6 +8,7 @@ export default function CadastroClientePage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [endereco, setEndereco] = useState(""); // Novo estado para endereço
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -50,7 +51,7 @@ export default function CadastroClientePage() {
       const response = await fetch('/api/clientes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, senha }),
+        body: JSON.stringify({ nome, email, senha, endereco }), // Enviar endereço para a API
       });
       const data = await response.json();
       if (!response.ok) {
@@ -163,6 +164,17 @@ export default function CadastroClientePage() {
                 value={confirmarSenha}
                 onChange={(e) => setConfirmarSenha(e.target.value)}
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Endereço (opcional)</label>
+              <input
+                type="text"
+                className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                placeholder="Rua, número, bairro, cidade"
+                value={endereco}
+                onChange={(e) => setEndereco(e.target.value)}
               />
             </div>
             

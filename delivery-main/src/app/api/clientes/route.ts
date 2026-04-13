@@ -15,6 +15,8 @@ export async function GET(request: Request) {
           id: true,
           email: true,
           nome: true,
+          endereco: true,
+          
           // senha não é retornada
         },
       });
@@ -28,6 +30,7 @@ export async function GET(request: Request) {
         id: Number(cliente.id),
         email: cliente.email,
         nome: cliente.nome,
+        endereco: cliente.endereco,
       };
       
       return NextResponse.json(clienteResponse);
@@ -37,6 +40,7 @@ export async function GET(request: Request) {
         id: true,
         email: true,
         nome: true,
+        endereco: true,
         // senha não é retornada
       },
     });
@@ -46,6 +50,7 @@ export async function GET(request: Request) {
       id: Number(c.id),
       email: c.email,
       nome: c.nome,
+      endereco: c.endereco,
       
     }));
     
@@ -58,7 +63,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { nome, email, senha } = await request.json();
+    const { nome, email, senha, endereco } = await request.json();
     
     console.log('[API Clientes POST] Dados recebidos:', { nome, email, senhaLength: senha?.length });
     
@@ -91,11 +96,13 @@ export async function POST(request: Request) {
         nome,
         email,
         senha: hashedPassword,
+        endereco: endereco || null,
       },
       select: {
         id: true,
         email: true,
         nome: true,
+        endereco: true,
         // senha não é retornada
       },
     });
@@ -107,6 +114,7 @@ export async function POST(request: Request) {
       id: Number(novoCliente.id),
       email: novoCliente.email,
       nome: novoCliente.nome,
+      endereco: novoCliente.endereco,
     };
     
     return NextResponse.json(clienteResponse, { status: 201 });
@@ -126,7 +134,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const { nome, email, senha } = await request.json();
+        const { nome, email, senha, endereco } = await request.json();
         
         if (!email) {
             return NextResponse.json({ error: 'Email é obrigatório' }, { status: 400 });
@@ -144,6 +152,7 @@ export async function PUT(request: Request) {
         // Prepara os dados para atualização
         const dataToUpdate: any = {};
         if (nome) dataToUpdate.nome = nome;
+        if (endereco) dataToUpdate.endereco = endereco;
         if (senha) {
             const hashedPassword = await bcrypt.hash(senha, 10);
             dataToUpdate.senha = hashedPassword;
@@ -152,11 +161,23 @@ export async function PUT(request: Request) {
         const updatedCliente = await prisma.cliente.update({
             where: { email },
             data: dataToUpdate,
+            select: {
+                id: true,
+                email: true,
+                nome: true,
+                endereco: true,
+            },
         });
 
-        // Remove a senha da resposta
-        const { senha: _, ...clienteSemSenha } = updatedCliente;
-        return NextResponse.json(serializeBigInt(clienteSemSenha));
+        // Converter BigInt para Number
+        const clienteResponse = {
+            id: Number(updatedCliente.id),
+            email: updatedCliente.email,
+            nome: updatedCliente.nome,
+            endereco: updatedCliente.endereco,
+        };
+
+        return NextResponse.json(clienteResponse);
     } catch (error) {
         console.error('Erro ao atualizar cliente:', error);
         return NextResponse.json({ error: 'Erro ao atualizar cliente' }, { status: 500 });
