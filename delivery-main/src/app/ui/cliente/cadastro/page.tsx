@@ -8,7 +8,11 @@ export default function CadastroClientePage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [endereco, setEndereco] = useState(""); // Novo estado para endereço
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,12 +50,26 @@ export default function CadastroClientePage() {
     }
 
     setLoading(true);
+    const enderecoCompleto = [
+      rua.trim() ? rua.trim() : null,
+      numero.trim() ? numero.trim() : null,
+      complemento.trim() ? complemento.trim() : null,
+      bairro.trim() ? bairro.trim() : null,
+      cidade.trim() ? cidade.trim() : null,
+    ]
+      .filter(Boolean)
+      .reduce((acc, part) => {
+        if (!acc) return part;
+        if (part === complemento.trim()) return `${acc} - ${part}`;
+        return `${acc}, ${part}`;
+      }, "");
+
     try {
       // Criar conta
       const response = await fetch('/api/clientes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, senha, endereco }), // Enviar endereço para a API
+        body: JSON.stringify({ nome, email, senha, endereco: enderecoCompleto || null }), // Enviar endereço formatado para a API
       });
       const data = await response.json();
       if (!response.ok) {
@@ -85,8 +103,8 @@ export default function CadastroClientePage() {
     return (
 
         
-        <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
-          <div className="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50 text-center">
+        <div className="min-h-screen flex items-center justify-start p-5 relative z-10">
+          <div className="w-full max-w-2xl bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50 text-center mx-auto">
             <div className="text-6xl mb-4">✅</div>
             <h1 className="text-3xl font-bold mb-4 text-green-600">Conta criada com sucesso!</h1>
             <p className="text-gray-600 mb-6">Redirecionando para o login...</p>
@@ -104,8 +122,8 @@ export default function CadastroClientePage() {
       <div className="background-overlay" />
       
       {/* Conteúdo principal */}
-      <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
-        <div className="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50">
+      <div className="min-h-screen flex items-center justify-start p-4 relative z-10">
+        <div className="w-full max-w-5xl bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/50 mx-auto">
           <h1 className="text-3xl font-bold mb-2 text-purple-700 text-center">Criar Conta</h1>
           <p className="text-gray-600 text-center mb-6">Cadastre-se para fazer pedidos</p>
 
@@ -115,69 +133,125 @@ export default function CadastroClientePage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
-              <input
-                type="text"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
-                placeholder="Seu nome"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input
-                type="email"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
-                placeholder="seuemail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-              <input
-                type="password"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
-                placeholder="Mínimo 6 caracteres"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-                minLength={6}
-                pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}"
-                title="Mínimo 6 caracteres, 1 maiúscula, 1 minúscula e 1 número"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha</label>
-              <input
-                type="password"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
-                placeholder="Digite a senha novamente"
-                value={confirmarSenha}
-                onChange={(e) => setConfirmarSenha(e.target.value)}
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Cadastro</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                    <input
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Seu nome"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input
+                      type="email"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="seuemail.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <input
+                      type="password"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Mínimo 6 caracteres"
+                      value={senha}
+                      onChange={(e) => setSenha(e.target.value)}
+                      required
+                      minLength={6}
+                      pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}"
+                      title="Mínimo 6 caracteres, 1 maiúscula, 1 minúscula e 1 número"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha</label>
+                    <input
+                      type="password"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Digite a senha novamente"
+                      value={confirmarSenha}
+                      onChange={(e) => setConfirmarSenha(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">Endereço</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Rua</label>
+                    <input
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Rua"
+                      value={rua}
+                      onChange={(e) => setRua(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Número</label>
+                    <input
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Número"
+                      value={numero}
+                      onChange={(e) => setNumero(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Complemento</label>
+                    <input
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Apartamento, casa, bloco"
+                      value={complemento}
+                      onChange={(e) => setComplemento(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Bairro</label>
+                    <input
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Bairro"
+                      value={bairro}
+                      onChange={(e) => setBairro(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Cidade</label>
+                    <input
+                      type="text"
+                      className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
+                      placeholder="Cidade"
+                      value={cidade}
+                      onChange={(e) => setCidade(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Endereço (opcional)</label>
-              <input
-                type="text"
-                className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-400"
-                placeholder="Rua, número, bairro, cidade"
-                value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
-              />
-            </div>
-            
             <button
               type="submit"
               disabled={loading || !nome || !email || !senha || !confirmarSenha}
