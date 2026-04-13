@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ 
       success: true,
       admin: {
-        id: admin.id,
+        id: admin.id.toString(),
         email: admin.email,
         name: admin.nome,
         isAdmin: (admin as any).isAdmin,
