@@ -46,6 +46,7 @@ export async function GET(request: Request) {
       id: Number(c.id),
       email: c.email,
       nome: c.nome,
+      
     }));
     
     return NextResponse.json(clientesResponse);
