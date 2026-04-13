@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 async function createAdmin() {
   const email = 'admin@acaidovale.com';
-  const password = 'admin123';
+  const password = 'Admin123';
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {

@@ -85,7 +85,7 @@ export default function Home() {
             <h2 className="text-5xl font-bold mb-6">Pronto para se deliciar?</h2>
             <p className="text-2xl mb-12 opacity-90">Monte seu sorvete perfeito em apenas alguns cliques!</p>
             <button
-              onClick={() => router.push('/ui/pedido/tamanho')}
+              onClick={() => router.push('/cliente/cadastro')}
               className="bg-white text-purple-600 px-12 py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 hover:shadow-3xl"
             >
               Começar Agora
