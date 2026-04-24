@@ -159,8 +159,7 @@ export async function PUT(request: Request) {
             select: {
                 id: true,
                 email: true,
-                nome: true,
-                endereco: true
+                nome: true
             },
         });
 
@@ -168,8 +167,7 @@ export async function PUT(request: Request) {
         const clienteResponse = {
             id: Number(updatedCliente.id),
             email: updatedCliente.email,
-            nome: updatedCliente.nome,
-            endereco: updatedCliente.endereco,
+            nome: updatedCliente.nome
         };
 
         return NextResponse.json(clienteResponse);
