@@ -14,7 +14,8 @@ export async function GET(request: Request) {
         select: {
           id: true,
           email: true,
-          nome: true
+          nome: true,
+          endereco: true
           
           
           // senha não é retornada
@@ -29,7 +30,8 @@ export async function GET(request: Request) {
       const clienteResponse = {
         id: Number(cliente.id),
         email: cliente.email,
-        nome: cliente.nome
+        nome: cliente.nome,
+        endereco: cliente.endereco
       };
       
       return NextResponse.json(clienteResponse);
@@ -38,7 +40,8 @@ export async function GET(request: Request) {
       select: {
         id: true,
         email: true,
-        nome: true
+        nome: true,
+        endereco: true
         // senha não é retornada
       },
     });
@@ -60,7 +63,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { nome, email, senha } = await request.json();
+    const { nome, email, senha, endereco } = await request.json();
     
     console.log('[API Clientes POST] Dados recebidos:', { nome, email, senhaLength: senha?.length });
     
@@ -93,7 +96,7 @@ export async function POST(request: Request) {
         nome,
         email,
         senha: hashedPassword,
-        
+        endereco: endereco,
       },
       select: {
         id: true,
