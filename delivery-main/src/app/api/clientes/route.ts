@@ -14,8 +14,8 @@ export async function GET(request: Request) {
         select: {
           id: true,
           email: true,
-          nome: true,
-          endereco: true
+          nome: true
+          
           
           
           // senha não é retornada
@@ -30,8 +30,7 @@ export async function GET(request: Request) {
       const clienteResponse = {
         id: Number(cliente.id),
         email: cliente.email,
-        nome: cliente.nome,
-        endereco: cliente.endereco
+        nome: cliente.nome
       };
       
       return NextResponse.json(clienteResponse);
@@ -40,8 +39,7 @@ export async function GET(request: Request) {
       select: {
         id: true,
         email: true,
-        nome: true,
-        endereco: true
+        nome: true
         // senha não é retornada
       },
     });
@@ -63,7 +61,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { nome, email, senha, endereco } = await request.json();
+    const { nome, email, senha } = await request.json();
     
     console.log('[API Clientes POST] Dados recebidos:', { nome, email, senhaLength: senha?.length });
     
@@ -95,14 +93,12 @@ export async function POST(request: Request) {
       data: {
         nome,
         email,
-        senha: hashedPassword,
-        endereco: endereco,
+        senha: hashedPassword
       },
       select: {
         id: true,
         email: true,
-        nome: true,
-        endereco: true,
+        nome: true
         // senha não é retornada
       },
     });
@@ -113,8 +109,7 @@ export async function POST(request: Request) {
     const clienteResponse = {
       id: Number(novoCliente.id),
       email: novoCliente.email,
-      nome: novoCliente.nome,
-      endereco: novoCliente.endereco,
+      nome: novoCliente.nome
     };
     
     return NextResponse.json(clienteResponse, { status: 201 });
@@ -134,7 +129,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const { nome, email, senha, endereco } = await request.json();
+        const { nome, email, senha } = await request.json();
         
         if (!email) {
             return NextResponse.json({ error: 'Email é obrigatório' }, { status: 400 });
@@ -152,7 +147,7 @@ export async function PUT(request: Request) {
         // Prepara os dados para atualização
         const dataToUpdate: any = {};
         if (nome) dataToUpdate.nome = nome;
-        if (endereco) dataToUpdate.endereco = endereco;
+
         if (senha) {
             const hashedPassword = await bcrypt.hash(senha, 10);
             dataToUpdate.senha = hashedPassword;
@@ -165,7 +160,7 @@ export async function PUT(request: Request) {
                 id: true,
                 email: true,
                 nome: true,
-                endereco: true,
+                endereco: true
             },
         });
 
