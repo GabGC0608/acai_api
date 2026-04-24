@@ -14,7 +14,7 @@ datasource db {
 model Adicional {
   id        BigInt              @id @default(autoincrement())
   nome      String
-  pedidos   PedidoAdicional[]
+pedidos   PedidoAdicional[]
   favoritos FavoritoAdicional[]
 }
 
@@ -31,7 +31,6 @@ model Cliente {
   email            String               @unique
   nome             String
   senha            String
-  endereco         String?
   isAdmin          Boolean              @default(false)
   pontosFidelidade Int                  @default(0)
   pedidos          Pedido[]
