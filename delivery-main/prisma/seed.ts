@@ -52,6 +52,7 @@ async function main() {
   console.log('👤 Criando usuário admin padrão...');
   const adminEmail = 'admin@delivery.com';
   const adminPassword = await bcrypt.hash('Admin123', 10);
+  const adminEndereco = 'Admin - endereço não informado';
 
   await prisma.cliente.upsert({
     where: { email: adminEmail },
@@ -61,6 +62,7 @@ async function main() {
     create: {
       email: adminEmail,
       nome: 'Administrador',
+      endereco: adminEndereco,
       senha: adminPassword,
       isAdmin: true,
     } as any,

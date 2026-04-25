@@ -26,6 +26,10 @@ export default function CadastroClientePage() {
       setError('Preencha todos os campos obrigatórios');
       return;
     }
+    if (!rua.trim() || !numero.trim() || !bairro.trim() || !cidade.trim()) {
+      setError('Endereço é obrigatório (rua, número, bairro e cidade)');
+      return;
+    }
     if (senha.length < 6) {
       setError('A senha deve ter pelo menos 6 caracteres');
       return;
@@ -69,7 +73,7 @@ export default function CadastroClientePage() {
       const response = await fetch('/api/clientes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, email, senha, endereco: enderecoCompleto || null }), // Enviar endereço formatado para a API
+        body: JSON.stringify({ nome, email, senha, endereco: enderecoCompleto }), // endereco é obrigatório
       });
       const data = await response.json();
       if (!response.ok) {
@@ -78,21 +82,8 @@ export default function CadastroClientePage() {
         return;
       }
       // Sucesso! Mostrar mensagem e redirecionar para login
-      // Fazer login automaticamente após criar a conta
-      const signInResult = await signIn('credentials', {
-        email,
-        password: senha,
-        redirect: false,
-      });
-
-      if (signInResult?.ok) {
-        setSuccess(true);
-        setTimeout(() => router.push('/'), 1500);
-      } else {
-        // Se falhar o login automático, redirecionar para login manual
-        setSuccess(true);
-        setTimeout(() => router.push('/login'), 2000);
-      }
+      setSuccess(true);
+      setTimeout(() => router.push('/ui/cliente/login'), 1500);
     } catch (err) {
       setError('Erro ao conectar com o servidor');
       setLoading(false);
@@ -202,6 +193,7 @@ export default function CadastroClientePage() {
                       placeholder="Rua"
                       value={rua}
                       onChange={(e) => setRua(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -213,6 +205,7 @@ export default function CadastroClientePage() {
                       placeholder="Número"
                       value={numero}
                       onChange={(e) => setNumero(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -235,6 +228,7 @@ export default function CadastroClientePage() {
                       placeholder="Bairro"
                       value={bairro}
                       onChange={(e) => setBairro(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -246,6 +240,7 @@ export default function CadastroClientePage() {
                       placeholder="Cidade"
                       value={cidade}
                       onChange={(e) => setCidade(e.target.value)}
+                      required
                     />
                   </div>
                 </div>
@@ -254,10 +249,12 @@ export default function CadastroClientePage() {
 
             <button
               type="submit"
-              disabled={loading || !nome || !email || !senha || !confirmarSenha}
+              disabled={loading || !nome || !email || !senha || !confirmarSenha || !rua || !numero || !bairro || !cidade}
               className="w-full py-3 rounded-lg text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all shadow-lg"
             >
+              
               {loading ? 'Criando conta...' : 'Criar Conta'}
+              
             </button>
           </form>
 
@@ -285,7 +282,7 @@ export default function CadastroClientePage() {
 
           <div className="mt-6 text-center text-sm text-gray-600">
             Já tem uma conta?{' '}
-            <a href="/login" className="text-purple-600 hover:text-purple-700 font-semibold">
+            <a href="/ui/cliente/login" className="text-purple-600 hover:text-purple-700 font-semibold">
               Fazer login
             </a>
           </div>

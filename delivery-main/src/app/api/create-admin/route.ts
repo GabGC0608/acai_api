@@ -8,7 +8,7 @@ import bcrypt from 'bcryptjs';
  */
 export async function POST(request: Request) {
   try {
-    const { secret, email, password, name } = await request.json();
+    const { secret, email, password, name, endereco } = await request.json();
     
     // Validar secret
     if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
@@ -38,6 +38,7 @@ export async function POST(request: Request) {
       data: {
         email,
         nome: name,
+        endereco,
         senha: hashedPassword,
         isAdmin: true,
       } as any,

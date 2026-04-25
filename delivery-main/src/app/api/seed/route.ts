@@ -59,6 +59,7 @@ export async function POST(request: Request) {
     console.log('👤 Criando usuário admin padrão...');
     const adminEmail = 'admin@delivery.com';
     const adminPassword = await bcrypt.hash('admin123', 10);
+    const adminEndereco = 'Admin - endereço não informado';
 
     await prisma.cliente.upsert({
       where: { email: adminEmail },
@@ -68,6 +69,7 @@ export async function POST(request: Request) {
       create: {
         email: adminEmail,
         nome: 'Administrador',
+        endereco: adminEndereco,
         senha: adminPassword,
         isAdmin: true,
       } as any,

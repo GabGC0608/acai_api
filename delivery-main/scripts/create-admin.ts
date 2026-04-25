@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 async function createAdmin() {
   const email = 'admin@delivery.com';
   const password = 'Admin123';
+  const endereco = 'Admin - endereço não informado';
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
@@ -17,6 +18,7 @@ async function createAdmin() {
       create: {
         email,
         nome: 'Administrador',
+        endereco,
         senha: hashedPassword,
         isAdmin: true,
       } as any,
