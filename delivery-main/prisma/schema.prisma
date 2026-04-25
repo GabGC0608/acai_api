@@ -31,12 +31,13 @@ model Cliente {
   email            String               @unique
   nome             String
   senha            String
-  endereco         String
+  endereco         String?
   isAdmin          Boolean              @default(false)
   pontosFidelidade Int                  @default(0)
   pedidos          Pedido[]
   favoritos        Favorito[]
   transacoes       FidelidadeTransacao[]
+
 }
 
 model Pedido {
