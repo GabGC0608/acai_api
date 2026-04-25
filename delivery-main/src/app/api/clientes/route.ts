@@ -61,14 +61,14 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { nome, email, senha } = await request.json();
+    const { nome, email, senha, endereco } = await request.json();
     
-    console.log('[API Clientes POST] Dados recebidos:', { nome, email, senhaLength: senha?.length });
+    console.log('[API Clientes POST] Dados recebidos:', { nome, email, endereco, senhaLength: senha?.length });
     
-    if (!nome || !email || !senha) {
+    if (!nome || !email || !senha || !endereco) {
       console.log('[API Clientes POST] Erro: Campos obrigatórios faltando');
       return NextResponse.json(
-        { error: 'Nome, email e senha são obrigatórios' },
+        { error: 'Nome, email, endereço e senha são obrigatórios' },
         { status: 400 }
       );
     }
@@ -93,6 +93,7 @@ export async function POST(request: Request) {
       data: {
         nome,
         email,
+        endereco,
         senha: hashedPassword
       },
       select: {
