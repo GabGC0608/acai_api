@@ -114,7 +114,7 @@ export default function DashboardPage() {
           fetch("/api/v1/flavors"),
           fetch("/api/v1/additionals"),
           fetch("/api/v1/customers"),
-          fetch("/api/v1/orders"),
+          fetch("/api/pedidos"),
           fetch("/api/v1/coupons"),
           fetch("/api/v1/loyalty"),
         ]);
@@ -152,7 +152,31 @@ export default function DashboardPage() {
       );
       setCupons(cuponsData);
       setClientesFidelidade(fidelidadeData);
-      setPedidos(pedidosData); // TODO: transformar quando necessário
+      setPedidos(
+        pedidosData.map((p: any) => ({
+          id: p.id,
+          status: p.status || "Pendente",
+          pagamento: p.formaPagamento,
+          endereco: p.enderecoEntrega,
+          cliente: p.cliente
+            ? {
+                nome: p.cliente.nome,
+                email: p.cliente.email,
+                endereco: p.cliente.endereco,
+              }
+            : undefined,
+          potes: [
+            {
+              tamanho: p.tamanho,
+              preco: p.valorTotal,
+              sabores:
+                p.sabores?.map((s: any) => s.sabor?.nome).filter(Boolean) || [],
+              adicionais:
+                p.adicionais?.map((a: any) => a.adicional?.nome).filter(Boolean) || [],
+            },
+          ],
+        }))
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
@@ -166,11 +190,10 @@ export default function DashboardPage() {
 
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
-      // Usar nova API v1
-      const response = await fetch(`/api/v1/admin/orders/${id}/status`, {
-        method: "PATCH",
+      const response = await fetch("/api/pedidos", {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ id, status: newStatus }),
       });
 
       if (!response.ok) {
@@ -189,7 +212,7 @@ export default function DashboardPage() {
 
   const handleDeletarPedido = async (id: number) => {
     try {
-      const response = await fetch(`/api/v1/orders/${id}`, {
+      const response = await fetch(`/api/pedidos?id=${id}`, {
         method: "DELETE",
       });
       

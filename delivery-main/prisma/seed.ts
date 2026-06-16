@@ -70,7 +70,7 @@ async function main() {
   
   console.log('✅ Admin criado com sucesso!');
   console.log('📧 Email: admin@delivery.com');
-  console.log('🔑 Senha: admin123');
+  console.log('🔑 Senha: Admin123');
   console.log('');
   console.log('⚠️  IMPORTANTE: Altere a senha do admin em produção!');
   console.log('');

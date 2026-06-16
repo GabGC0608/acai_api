@@ -14,11 +14,8 @@ export async function GET(request: Request) {
         select: {
           id: true,
           email: true,
-          nome: true
-          
-          
-          
-          // senha não é retornada
+          nome: true,
+          endereco: true,
         },
       });
       
@@ -26,11 +23,11 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Cliente não encontrado' }, { status: 404 });
       }
       
-      // Converter BigInt para Number
       const clienteResponse = {
         id: Number(cliente.id),
         email: cliente.email,
-        nome: cliente.nome
+        nome: cliente.nome,
+        endereco: cliente.endereco,
       };
       
       return NextResponse.json(clienteResponse);
@@ -130,13 +127,12 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const { nome, email, senha } = await request.json();
+        const { nome, email, senha, endereco } = await request.json();
         
         if (!email) {
             return NextResponse.json({ error: 'Email é obrigatório' }, { status: 400 });
         }
 
-        // Verifica se o cliente existe
         const clienteExiste = await prisma.cliente.findUnique({
             where: { email },
         });
@@ -145,9 +141,9 @@ export async function PUT(request: Request) {
             return NextResponse.json({ error: 'Cliente não encontrado' }, { status: 404 });
         }
 
-        // Prepara os dados para atualização
-        const dataToUpdate: any = {};
+        const dataToUpdate: Record<string, unknown> = {};
         if (nome) dataToUpdate.nome = nome;
+        if (endereco !== undefined) dataToUpdate.endereco = endereco;
 
         if (senha) {
             const hashedPassword = await bcrypt.hash(senha, 10);
@@ -160,15 +156,16 @@ export async function PUT(request: Request) {
             select: {
                 id: true,
                 email: true,
-                nome: true
+                nome: true,
+                endereco: true,
             },
         });
 
-        // Converter BigInt para Number
         const clienteResponse = {
             id: Number(updatedCliente.id),
             email: updatedCliente.email,
-            nome: updatedCliente.nome
+            nome: updatedCliente.nome,
+            endereco: updatedCliente.endereco,
         };
 
         return NextResponse.json(clienteResponse);

@@ -1,0 +1,1 @@
+-- Migration duplicada consolidada em 20260413000000_add_endereco_to_cliente

@@ -21,6 +21,7 @@ RESPONSE=$(curl -s -X POST "$APP_URL/api/create-admin" \
     \"email\": \"$EMAIL\",
     \"password\": \"$PASSWORD\",
     \"name\": \"$NAME\"
+    \"endereco\": \"$ENDERECO\"
   }")
 
 echo ""

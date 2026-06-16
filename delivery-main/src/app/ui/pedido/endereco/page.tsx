@@ -37,84 +37,93 @@ export default function EnderecoPage() {
     }
   }, [session, pedido.cliente?.email, setPedido]);
 
-  // Carregar endereço do cliente autenticado
-  useEffect(() => {
-    const carregarEndereco = async () => {
-      if (session?.user?.email) {
-        try {
-          const response = await fetch(`/api/clientes?email=${encodeURIComponent(session.user.email)}`);
-          if (response.ok) {
-            const cliente = await response.json();
-            if (cliente.endereco) {
-              parseEndereco(cliente.endereco);
-            }
-          }
-        } catch (error) {
-          console.error('Erro ao carregar endereço:', error);
-        } finally {
-          setCarregando(false);
-        }
-      } else {
-        setCarregando(false);
-      }
-    };
-
-    carregarEndereco();
-  }, [session?.user?.email]);
-
-  // Helper para fazer parse do endereço completo
   const parseEndereco = (enderecoCompleto: string) => {
-    // Formato esperado: "rua, numero[ - complemento], bairro, cidade - estado cep[ (Ref: referencia)]"
     try {
-      // Se não houver endereço, apenas retorna
       if (!enderecoCompleto) return;
 
-      // Extrair referência se existir
       const refMatch = enderecoCompleto.match(/\(Ref: ([^)]+)\)/);
       if (refMatch) {
         setReferencia(refMatch[1]);
       }
 
-      // Remove a referência do texto para processar o resto
-      let endereco = enderecoCompleto.replace(/\s*\(Ref: [^)]+\)$/, "");
+      const endereco = enderecoCompleto.replace(/\s*\(Ref: [^)]+\)$/, "");
+      const partes = endereco.split(",").map((p) => p.trim());
 
-      // Divide por vírgulas e processa cada parte
-      const partes = endereco.split(",").map(p => p.trim());
-      
       if (partes.length >= 4) {
-        // Formato: "rua, numero[ - complemento], bairro, cidade - estado cep"
-        const ruaNumero = partes[0]; // "rua"
-        const numeroComplemento = partes[1]; // "numero - complemento" ou "numero"
-        const bairro_ = partes[2]; // "bairro"
-        const cidadeEstadoCep = partes.slice(3).join(",").trim(); // "cidade - estado cep"
-
-        // Parse rua
-        setRua(ruaNumero);
-
-        // Parse número e complemento
-        if (numeroComplemento.includes("-")) {
-          const [num, comp] = numeroComplemento.split("-").map(p => p.trim());
-          setNumero(num);
-          setComplemento(comp);
-        } else {
-          setNumero(numeroComplemento);
-        }
-
-        // Parse bairro
-        setBairro(bairro_);
-
-        // Parse cidade, estado e CEP
+        const cidadeEstadoCep = partes.slice(3).join(",").trim();
         const cidadeMatch = cidadeEstadoCep.match(/^([^-]+)\s*-\s*([A-Z]{2})\s+(\d{5}-?\d{3})/);
+
         if (cidadeMatch) {
+          setRua(partes[0]);
+          const numeroComplemento = partes[1];
+          if (numeroComplemento.includes("-")) {
+            const [num, comp] = numeroComplemento.split("-").map((p) => p.trim());
+            setNumero(num);
+            setComplemento(comp);
+          } else {
+            setNumero(numeroComplemento);
+          }
+          setBairro(partes[2]);
           setCidade(cidadeMatch[1].trim());
           setEstado(cidadeMatch[2].trim());
           setCep(cidadeMatch[3].trim());
+          return;
+        }
+
+        // Formato do cadastro: rua, numero, complemento?, bairro, cidade
+        setRua(partes[0]);
+        if (partes.length >= 5) {
+          setNumero(partes[1]);
+          setComplemento(partes[2]);
+          setBairro(partes[3]);
+          setCidade(partes[4]);
+        } else {
+          setNumero(partes[1]);
+          setBairro(partes[2]);
+          setCidade(partes[3]);
         }
       }
     } catch (error) {
-      console.error('Erro ao fazer parse do endereço:', error);
+      console.error("Erro ao fazer parse do endereço:", error);
     }
   };
+
+  // Carregar endereço do cliente autenticado
+  useEffect(() => {
+    const carregarEndereco = async () => {
+      const enderecoSessao = (session?.user as { endereco?: string | null })?.endereco;
+      const enderecoPedido = pedido.cliente?.endereco;
+
+      if (!session?.user?.email) {
+        setCarregando(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/clientes?email=${encodeURIComponent(session.user.email)}`);
+        if (response.ok) {
+          const cliente = await response.json();
+          if (cliente.endereco) {
+            parseEndereco(cliente.endereco);
+            setCarregando(false);
+            return;
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao carregar endereço:", error);
+      }
+
+      if (enderecoSessao) {
+        parseEndereco(enderecoSessao);
+      } else if (enderecoPedido) {
+        parseEndereco(enderecoPedido);
+      }
+
+      setCarregando(false);
+    };
+
+    carregarEndereco();
+  }, [session?.user?.email, session?.user, pedido.cliente?.endereco]);
 
   const handleFinalizar = async (e: React.FormEvent) => {
     e.preventDefault();
