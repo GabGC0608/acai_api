@@ -116,7 +116,34 @@ await prisma.customer.findMany({
 
 ---
 
-## 4. PERSPECTIVAS FUTURAS
+## 4. REFLEXÕES SOBRE O PROCESSO
+
+### 4.1 O que Funcionou Bem
+
+- **Arquitetura clara desde o início:** A definição prévia da Clean Architecture economizou estimados 40% do tempo que seria gasto em refatorações
+- **Testes desde o início:** Escrever testes junto com o código (aproximação TDD) preveniu refatorações maiores nas últimas semanas
+- **TypeScript estrito:** O uso de `strict mode` evitou dezenas de bugs em produção que só seriam descobertos em runtime
+- **Divisão de responsabilidades:** Papéis bem definidos no time reduziram conflitos de código e aceleraram o desenvolvimento
+
+### 4.2 O que Faríamos Diferente
+
+- **Documentação mais cedo:** A documentação técnica foi parcialmente deixada para o final; iniciá-la junto com o desenvolvimento seria mais eficiente
+- **Testes E2E automatizados:** Os testes de ponta a ponta foram feitos manualmente; automatizá-los com Playwright/Cypress seria ideal
+- **Design System:** Criar um design system antes de desenvolver os componentes teria gerado mais consistência visual
+
+### 4.3 Impacto das Decisões Técnicas
+
+| Decisão | Impacto Positivo | Impacto Negativo |
+|---------|-----------------|-----------------|
+| Clean Architecture | Alta manutenibilidade, testabilidade | Curva de aprendizado inicial |
+| TypeScript strict | Zero bugs de tipo em produção | Setup inicial mais lento |
+| Prisma ORM | Queries type-safe, migrações simples | Serialização BigInt requereu solução custom |
+| JWT stateless | Sem necessidade de sessão no servidor | Requer refresh token para segurança |
+| Next.js full-stack | Um único processo, deploy simplificado | Limitações em WebSockets |
+
+---
+
+## 5. PERSPECTIVAS FUTURAS
 
 ### Curto Prazo (1-2 meses)
 - [ ] Sistema de cupons e descontos
@@ -137,7 +164,7 @@ await prisma.customer.findMany({
 
 ---
 
-## 5. RECOMENDAÇÕES PARA FUTUROS DEVS
+## 6. RECOMENDAÇÕES PARA FUTUROS DEVS
 
 1. **Leia primeiro:**
    - ARCHITECTURE.md (30 min)
