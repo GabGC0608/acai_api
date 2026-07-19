@@ -13,7 +13,6 @@ export default function CadastroClientePage() {
   const [numero, setNumero] = useState("");
   const [complemento, setComplemento] = useState("");
   const [bairro, setBairro] = useState("");
-  const [cidade, setCidade] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -56,7 +55,6 @@ export default function CadastroClientePage() {
       numero.trim(),
       complemento.trim(),
       bairro.trim(),
-      cidade.trim(),
     ]
       .filter(Boolean)
       .join(", ");
@@ -235,15 +233,6 @@ export default function CadastroClientePage() {
                       className="mt-1 block w-full p-3 border border-gray-300 rounded-md"
                       value={bairro}
                       onChange={(e) => setBairro(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Cidade</label>
-                    <input
-                      type="text"
-                      className="mt-1 block w-full p-3 border border-gray-300 rounded-md"
-                      value={cidade}
-                      onChange={(e) => setCidade(e.target.value)}
                     />
                   </div>
                 </div>

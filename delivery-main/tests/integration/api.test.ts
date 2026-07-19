@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 
 import request from 'supertest';
 import { PrismaClient } from '@prisma/client';
@@ -210,5 +211,153 @@ describe('API Integration Tests', () => {
     const getByIdResponse = await request(app).get(`/api/v1/additionals/${adicional.id}`);
     expect(getByIdResponse.status).toBe(200);
     expect(getByIdResponse.body.id).toBe(adicional.id);
+  });
+
+  it('should manage v1 customer lifecycle via /api/v1/customers', async () => {
+    const email = `v1-customer-${Date.now()}@example.com`;
+
+    const createResponse = await request(app)
+      .post('/api/v1/customers')
+      .send({
+        name: 'V1 Customer',
+        email,
+        password: 'password123',
+      });
+
+    expect(createResponse.status).toBe(201);
+    expect(createResponse.body.email).toBe(email);
+
+    const listResponse = await request(app).get('/api/v1/customers');
+    expect(listResponse.status).toBe(200);
+    expect(Array.isArray(listResponse.body)).toBe(true);
+
+    const getByEmailResponse = await request(app).get('/api/v1/customers').query({ email });
+    expect(getByEmailResponse.status).toBe(200);
+    expect(getByEmailResponse.body.email).toBe(email);
+
+    const getByIdResponse = await request(app).get(`/api/v1/customers/${createResponse.body.id}`);
+    expect(getByIdResponse.status).toBe(200);
+    expect(getByIdResponse.body.id).toBe(createResponse.body.id);
+
+    const updateResponse = await request(app)
+      .put('/api/v1/customers')
+      .send({
+        email,
+        name: 'V1 Customer Updated',
+      });
+
+    expect(updateResponse.status).toBe(200);
+    expect(updateResponse.body.name).toBe('V1 Customer Updated');
+
+    const deleteResponse = await request(app).delete(`/api/v1/customers/${createResponse.body.id}`);
+    expect(deleteResponse.status).toBe(200);
+    expect(deleteResponse.body.message).toMatch(/deleted successfully/i);
+  });
+
+  it('should manage v1 order lifecycle via /api/v1/orders', async () => {
+    const createResponse = await request(app)
+      .post('/api/v1/orders')
+      .send({
+        customerId: cliente.id,
+        flavorIds: [sabor.id],
+        additionalIds: [adicional.id],
+        size: 'Grande',
+        totalValue: 60,
+        discountValue: 10,
+        couponCode: 'TESTCOUPON',
+        paymentMethod: 'Cartão de Crédito',
+        deliveryAddress: 'Rua V1, 456',
+      });
+
+    expect(createResponse.status).toBe(201);
+    expect(createResponse.body.customerId).toBe(cliente.id);
+
+    const listResponse = await request(app).get('/api/v1/orders').query({ customerId: cliente.id });
+    expect(listResponse.status).toBe(200);
+    expect(Array.isArray(listResponse.body)).toBe(true);
+    expect(listResponse.body.some((item: any) => item.id === createResponse.body.id)).toBe(true);
+
+    const getByIdResponse = await request(app).get(`/api/v1/orders/${createResponse.body.id}`);
+    expect(getByIdResponse.status).toBe(200);
+    expect(getByIdResponse.body.id).toBe(createResponse.body.id);
+
+    const deleteResponse = await request(app).delete(`/api/v1/orders/${createResponse.body.id}`);
+    expect(deleteResponse.status).toBe(200);
+    expect(deleteResponse.body.message).toMatch(/deleted successfully/i);
+  });
+
+  it('should manage favorites via /api/v1/favorites', async () => {
+    const createResponse = await request(app)
+      .post('/api/v1/favorites')
+      .send({
+        clienteId: cliente.id,
+        nome: 'Favorito de teste',
+        tamanho: 'Grande',
+        preco: 25.5,
+        sabores: [{ id: sabor.id }],
+        adicionais: [{ id: adicional.id }],
+      });
+
+    expect(createResponse.status).toBe(201);
+    expect(createResponse.body.clienteId).toBe(cliente.id);
+
+    const listResponse = await request(app).get('/api/v1/favorites').query({ clienteId: cliente.id });
+    expect(listResponse.status).toBe(200);
+    expect(Array.isArray(listResponse.body)).toBe(true);
+    expect(listResponse.body.some((item: any) => item.id === createResponse.body.id)).toBe(true);
+
+    const deleteResponse = await request(app).delete('/api/v1/favorites').query({ id: createResponse.body.id });
+    expect(deleteResponse.status).toBe(200);
+    expect(deleteResponse.body.ok).toBe(true);
+  });
+
+  it('should manage loyalty points via /api/v1/loyalty', async () => {
+    const listResponse = await request(app).get('/api/v1/loyalty');
+    expect(listResponse.status).toBe(200);
+    expect(Array.isArray(listResponse.body)).toBe(true);
+
+    const earnResponse = await request(app)
+      .post('/api/v1/loyalty')
+      .send({
+        clienteId: cliente.id,
+        pontos: 10,
+        tipo: 'earn',
+        descricao: 'Pontos de teste',
+      });
+
+    expect(earnResponse.status).toBe(200);
+    expect(earnResponse.body.cliente.id).toBe(cliente.id);
+    expect(earnResponse.body.transacao.pontos).toBe(10);
+  });
+
+  it('should return admin stats and update order status', async () => {
+    const adminOrderResponse = await request(app)
+      .post('/api/pedidos')
+      .send({
+        clienteId: cliente.id,
+        sabores: [{ id: sabor.id }],
+        adicionais: [{ id: adicional.id }],
+        tamanho: 'Grande',
+        valorTotal: 40,
+        formaPagamento: 'Pix',
+        enderecoEntrega: 'Rua Admin, 789',
+      });
+
+    expect(adminOrderResponse.status).toBe(201);
+
+    const statsResponse = await request(app).get('/api/v1/admin/dashboard/stats');
+    expect(statsResponse.status).toBe(200);
+    expect(statsResponse.body.totalOrders).toBeDefined();
+    expect(statsResponse.body.totalCustomers).toBeDefined();
+
+    const statusResponse = await request(app)
+      .patch(`/api/v1/admin/orders/${adminOrderResponse.body.id}/status`)
+      .send({ status: 'Entregue' });
+
+    expect(statusResponse.status).toBe(200);
+    expect(statusResponse.body.status).toBe('Entregue');
+
+    const deleteResponse = await request(app).delete('/api/pedidos').query({ id: adminOrderResponse.body.id });
+    expect(deleteResponse.status).toBe(200);
   });
 });
