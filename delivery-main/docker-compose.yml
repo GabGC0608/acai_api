@@ -28,8 +28,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - POSTGRES_PRISMA_URL=postgresql://gabriel:Gc-71602003@postgres:5432/delivery_db?schema=public
-      - DATABASE_URL=postgresql://gabriel:Gc-71602003@postgres:5432/delivery_db?schema=public
+      - POSTGRES_PRISMA_URL=postgresql://user:password@postgres:5432/delivery_db?schema=public
+      - DATABASE_URL=postgresql://user:password@postgres:5432/delivery_db?schema=public
       - NODE_ENV=production
     depends_on:
       postgres:
