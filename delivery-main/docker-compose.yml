@@ -8,8 +8,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: gabriel
-      POSTGRES_PASSWORD: Gc-71602003
+      POSTGRES_USER: user  
+      POSTGRES_PASSWORD: password
       POSTGRES_DB: delivery_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
