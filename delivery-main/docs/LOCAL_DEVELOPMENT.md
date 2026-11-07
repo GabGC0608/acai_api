@@ -14,8 +14,8 @@ Este guia ajudará você a configurar o ambiente de desenvolvimento local do pro
 ### Iniciar o banco de dados
 
 ```bash
-# Iniciar o PostgreSQL em background
-docker-compose up -d
+# Iniciar apenas o PostgreSQL em background
+docker compose up -d postgres
 
 # Verificar se está rodando
 docker-compose ps
@@ -94,6 +94,8 @@ pnpm dev
 ```
 
 Acesse: http://localhost:3000
+
+Esse fluxo é para desenvolvimento HTTP. Para executar a aplicação local completa com HTTPS e certificado gerado por você via OpenSSL, siga a seção **HTTPS local com sua chave OpenSSL** em [DEPLOY.md](../DEPLOY.md).
 
 ## 🛠️ Comandos Úteis
 

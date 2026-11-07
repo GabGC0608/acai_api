@@ -15,6 +15,11 @@ dist
 .env.*
 !.env.example
 
+# TLS private material
+certs
+*.key
+*.csr
+
 # Database
 *.db
 *.db-journal
@@ -41,4 +46,3 @@ coverage
 *.log
 README.md
 docs/
-

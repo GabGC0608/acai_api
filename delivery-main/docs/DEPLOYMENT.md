@@ -49,7 +49,7 @@ POSTGRES_URL_NON_POOLED="postgresql://user:pass@host-pooler.neon.tech/db?sslmode
 POSTGRES_URL="postgresql://user:pass@host.neon.tech/db?sslmode=require"
 
 # NextAuth
-NEXTAUTH_URL="https://your-app.vercel.app"
+NEXTAUTH_URL="https://acai-api.vercel.app"
 NEXTAUTH_SECRET="<gerar-com-openssl-rand-base64-32>"
 
 # Google OAuth (opcional)
@@ -63,6 +63,8 @@ JWT_EXPIRES_IN="7d"
 # Admin
 ADMIN_SECRET="<secret-para-criar-admins>"
 ```
+
+Em **Settings → Environment Variables**, configure `NEXTAUTH_URL` com o valor acima para Production e faça um novo deploy. A Vercel fornece e renova automaticamente o certificado HTTPS para `*.vercel.app`; não envie certificado ou chave OpenSSL ao projeto. A configuração de cabeçalhos de segurança do Next.js inclui HSTS para manter o acesso em HTTPS.
 
 ### Gerar Secrets
 
@@ -140,26 +142,9 @@ pnpm prisma db seed
 1. Acesse o SQL Editor no dashboard do Neon
 2. Execute manualmente os inserts dos arquivos `data/*.json`
 
-### Opção 3: API Endpoint
+### Opção 3: Endpoint existente
 
-Crie uma rota protegida para seed:
-
-```typescript
-// src/app/api/seed/route.ts
-import { prisma } from '@/lib/prisma';
-
-export async function POST(req: Request) {
-  const { secret } = await req.json();
-  
-  if (secret !== process.env.ADMIN_SECRET) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // Lógica de seed aqui
-  
-  return Response.json({ success: true });
-}
-```
+A rota `/api/seed` popula apenas sabores e adicionais e exige `ADMIN_SECRET` configurado. Ela não cria mais um administrador padrão nem retorna credenciais. Crie o administrador separadamente com um endereço de e-mail e uma senha fortes; nunca use credenciais padrão em produção.
 
 ## 👤 6. Criar Usuário Admin em Produção
 

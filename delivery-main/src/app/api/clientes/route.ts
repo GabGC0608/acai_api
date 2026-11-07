@@ -60,10 +60,7 @@ export async function POST(request: Request) {
   try {
     const { nome, email, senha, endereco } = await request.json();
     
-    console.log('[API Clientes POST] Dados recebidos:', { nome, email, endereco, senhaLength: senha?.length });
-    
     if (!nome || !email || !senha || !endereco) {
-      console.log('[API Clientes POST] Erro: Campos obrigatórios faltando');
       return NextResponse.json(
         { error: 'Nome, email, endereço e senha são obrigatórios' },
         { status: 400 }
@@ -74,17 +71,13 @@ export async function POST(request: Request) {
     const clienteExiste = await prisma.cliente.findUnique({
       where: { email },
     });
-
     if (clienteExiste) {
-      console.log('[API Clientes POST] Erro: Email já existe:', email);
       return NextResponse.json(
         { error: 'Cliente com este email já existe' },
         { status: 409 }
       );
     }
-
     const hashedPassword = await bcrypt.hash(senha, 10);
-    console.log('[API Clientes POST] Criando cliente no banco...');
     
     const novoCliente = await prisma.cliente.create({
       data: {
@@ -100,8 +93,6 @@ export async function POST(request: Request) {
         // senha não é retornada
       },
     });
-    
-    console.log('[API Clientes POST] Cliente criado com sucesso:', novoCliente.id);
     
     // Converter BigInt para Number na resposta
     const clienteResponse = {

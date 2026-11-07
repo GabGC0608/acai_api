@@ -11,7 +11,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function checkAdmin() {
       try {
-        // Verificar se o usuário está logado e é admin
+        // Verificar se o usuário está logado e é admi n
         const response = await fetch("/api/auth/session");
         const session = await response.json();
 

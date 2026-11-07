@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -9,7 +8,7 @@ export async function POST(request: Request) {
     const { secret } = await request.json();
 
     // Verificar secret para segurança
-    if (secret !== process.env.ADMIN_SECRET) {
+    if (!process.env.ADMIN_SECRET || secret !== process.env.ADMIN_SECRET) {
       return NextResponse.json(
         { error: 'Não autorizado' },
         { status: 401 }
@@ -55,26 +54,6 @@ export async function POST(request: Request) {
       });
     }
 
-    // Criar admin padrão
-    console.log('👤 Criando usuário admin padrão...');
-    const adminEmail = 'admin@delivery.com';
-    const adminPassword = await bcrypt.hash('admin123', 10);
-    const adminEndereco = 'Admin - endereço não informado';
-
-    await prisma.cliente.upsert({
-      where: { email: adminEmail },
-      update: {
-        isAdmin: true,
-      } as any,
-      create: {
-        email: adminEmail,
-        nome: 'Administrador',
-        endereco: adminEndereco,
-        senha: adminPassword,
-        isAdmin: true,
-      } as any,
-    });
-
     console.log('Seed concluído com sucesso!');
 
     return NextResponse.json({
@@ -83,7 +62,6 @@ export async function POST(request: Request) {
       data: {
         adicionais: adicionaisData.length,
         sabores: saboresData.length,
-        admin: { email: adminEmail, senha: 'admin123' }
       }
     });
 

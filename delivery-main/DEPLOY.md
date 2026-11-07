@@ -1,4 +1,31 @@
-# 🚀 Guia de Deploy - Ambiente de Homologação
+# 🚀 Guia de Deploy - Ambiente Local e Homologação
+
+## HTTPS local com sua chave OpenSSL (sem CA)
+
+O Compose deste projeto recebe a chave privada e o certificado gerados por você. No PowerShell, na raiz do repositório, execute:
+
+```powershell
+New-Item -ItemType Directory -Force certs
+$openssl = (Get-Command openssl -ErrorAction SilentlyContinue).Source
+if (-not $openssl) { $openssl = "$env:ProgramFiles\Git\usr\bin\openssl.exe" }
+if (-not (Test-Path $openssl)) { throw "OpenSSL não encontrado. Instale o OpenSSL ou o Git for Windows." }
+& $openssl genpkey -algorithm RSA -out certs/private.key -pkeyopt rsa_keygen_bits:2048
+& $openssl req -new -key certs/private.key -out certs/request.csr -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+& $openssl x509 -req -in certs/request.csr -signkey certs/private.key -out certs/server.crt -days 365 -copy_extensions copy
+docker compose up -d --build
+```
+
+`private.key` é a chave privada; mantenha-a protegida e nunca a compartilhe ou envie ao Git. O CSR é `request.csr`; o Nginx usa `server.crt` e `private.key`. O certificado é autoassinado pela própria chave, sem CA. A aplicação só fica acessível pela máquina local em **https://localhost**; a porta HTTP redireciona para HTTPS. O `NEXTAUTH_URL` do container é `https://localhost`, independentemente da URL usada na Vercel. A URL de produção e o HTTPS gerenciado pela Vercel não são alterados.
+
+Como o certificado não é confiável publicamente, o navegador pode mostrar um aviso. Para verificar o certificado sem desativar sua validação, execute `curl.exe --cacert certs/server.crt https://localhost/`. Não use este certificado local para um site público.
+
+Para parar os serviços locais:
+
+```powershell
+docker compose down
+```
+
+## Deploy em servidor próprio
 
 ## 📋 Pré-requisitos
 
@@ -167,12 +194,22 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-### 6. SSL com Let's Encrypt (Opcional)
+### 6. Certificado autoassinado para servidor próprio (sem CA)
 
 ```bash
-sudo apt-get install certbot python3-certbot-nginx
-sudo certbot --nginx -d seu-dominio-homolog.com
+mkdir -p certs
+openssl genpkey -algorithm RSA -out certs/private.key -pkeyopt rsa_keygen_bits:2048
+openssl req -new -key certs/private.key -out certs/request.csr \
+  -subj "/CN=seu-dominio-homolog.com" \
+  -addext "subjectAltName=DNS:seu-dominio-homolog.com"
+openssl x509 -req -in certs/request.csr -signkey certs/private.key \
+  -out certs/server.crt -days 365 -copy_extensions copy
+chmod 600 certs/private.key
+sudo install -m 644 certs/server.crt /etc/ssl/certs/delivery.crt
+sudo install -m 600 certs/private.key /etc/ssl/private/delivery.key
 ```
+
+Substitua o domínio pelo nome que os clientes realmente acessarão. Para localhost, use `-subj "/CN=localhost"` e `-addext "subjectAltName=DNS:localhost,IP:127.0.0.1"`. Sem uma CA confiável, navegadores não confiarão publicamente nesse certificado e exibirão um aviso; não use certificados autoassinados para receber credenciais pela Internet.
 
 ## 🔄 Atualização (CI/CD Manual)
 

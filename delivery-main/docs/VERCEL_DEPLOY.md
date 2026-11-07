@@ -60,7 +60,7 @@ Configure as seguintes variáveis em **Settings → Environment Variables**:
 DATABASE_URL=postgresql://user:pass@host:5432/db
 
 # NextAuth (OBRIGATÓRIO)
-NEXTAUTH_URL=https://seu-app.vercel.app
+NEXTAUTH_URL=https://acai-api.vercel.app
 NEXTAUTH_SECRET=generate-com-openssl-rand-base64-32
 
 # JWT (OBRIGATÓRIO)
@@ -73,6 +73,8 @@ GOOGLE_CLIENT_SECRET=seu-google-client-secret
 # Node Environment
 NODE_ENV=production
 ```
+
+Configure `NEXTAUTH_URL` em **Settings → Environment Variables** nos ambientes de produção e faça novo deploy. A Vercel provisiona e renova automaticamente HTTPS para o domínio `acai-api.vercel.app`; não é necessário gerar ou enviar chaves TLS OpenSSL. O projeto também envia HSTS e outros cabeçalhos de segurança.
 
 **⚠️ IMPORTANTE:** Gere secrets seguros:
 ```bash
@@ -142,41 +144,9 @@ vercel env pull .env.production
 pnpm prisma db seed
 ```
 
-### Opção 2: Via Script Serverless
+### Opção 2: Endpoint existente (temporário)
 
-Criar endpoint temporário em `src/app/api/seed/route.ts`:
-
-```typescript
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-
-export async function POST(request: Request) {
-  const { secret } = await request.json();
-  
-  // Proteger com secret
-  if (secret !== process.env.SEED_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // Executar seed
-  await prisma.sabor.createMany({
-    data: [
-      { nome: 'Chocolate', imagem: '/chocolate.jpg' },
-      { nome: 'Morango', imagem: '/morango.jpg' },
-      // ... mais sabores
-    ]
-  });
-
-  return NextResponse.json({ success: true });
-}
-```
-
-Depois fazer request POST:
-```bash
-curl -X POST https://seu-app.vercel.app/api/seed \
-  -H "Content-Type: application/json" \
-  -d '{"secret":"seu-seed-secret"}'
-```
+A rota `/api/seed` popula sabores e adicionais e exige `ADMIN_SECRET` configurado. Ela não cria administrador nem retorna senhas. Após uso, remova ou desabilite o endpoint e não coloque o segredo em código ou repositório.
 
 **⚠️ Remover o endpoint após usar!**
 
@@ -342,7 +312,7 @@ Se algo der errado:
 
 3. **Atualizar NEXTAUTH_URL:**
    ```bash
-   NEXTAUTH_URL=https://seudominio.com
+   NEXTAUTH_URL=https://acai-api.vercel.app
    ```
 
 ## 📝 Checklist Final

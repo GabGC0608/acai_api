@@ -12,8 +12,8 @@ cd delivery
 # 2. Instale as dependências
 pnpm install
 
-# 3. Inicie o PostgreSQL com Docker
-docker-compose up -d
+# 3. Inicie apenas o PostgreSQL com Docker
+docker compose up -d postgres
 
 # 4. Configure as variáveis de ambiente
 cp .env.local.example .env.local
@@ -31,6 +31,8 @@ pnpm dev
 ```
 
 Acesse: **http://localhost:3000**
+
+Este fluxo inicia o modo de desenvolvimento HTTP. Para executar a aplicação local completa com HTTPS e seu certificado OpenSSL, siga a seção **HTTPS local com sua chave OpenSSL** em [DEPLOY.md](./DEPLOY.md); o endereço será **https://localhost**.
 
 ## 📚 Documentação Completa
 

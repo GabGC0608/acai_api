@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { randomBytes } from "crypto";
 
 export const authOptions: AuthOptions = {
+  useSecureCookies: process.env.NODE_ENV === "production",
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
