@@ -15,9 +15,18 @@ if (-not (Test-Path $openssl)) { throw "OpenSSL não encontrado. Instale o OpenS
 docker compose up -d --build
 ```
 
-`private.key` é a chave privada; mantenha-a protegida e nunca a compartilhe ou envie ao Git. O CSR é `request.csr`; o Nginx usa `server.crt` e `private.key`. O certificado é autoassinado pela própria chave, sem CA. A aplicação só fica acessível pela máquina local em **https://localhost**; a porta HTTP redireciona para HTTPS. O `NEXTAUTH_URL` do container é `https://localhost`, independentemente da URL usada na Vercel. A URL de produção e o HTTPS gerenciado pela Vercel não são alterados.
+`private.key` é a chave privada; mantenha-a protegida e nunca a compartilhe ou envie ao Git. O CSR é `request.csr`; o Nginx usa `server.crt` e `private.key`. O certificado é autoassinado pela própria chave, sem CA. No ambiente local, a página inicial e páginas públicas/catálogo continuam em **http://localhost**. Login, cadastro, administração, APIs e etapas de pedido com dados pessoais ou de conta são redirecionados para **https://localhost**. O `NEXTAUTH_URL` do container é `https://localhost`, independentemente da URL usada na Vercel. A URL de produção e o HTTPS gerenciado pela Vercel não são alterados.
 
-Como o certificado não é confiável publicamente, o navegador pode mostrar um aviso. Para verificar o certificado sem desativar sua validação, execute `curl.exe --cacert certs/server.crt https://localhost/`. Não use este certificado local para um site público.
+### Fluxo de segurança seletiva
+
+1. Abra `http://localhost`: a página institucional e o catálogo público permanecem em HTTP.
+2. Use **Entrar**, **Fazer Pedido**, **Começar Agora** ou **Acessar login seguro**: a navegação troca para `https://localhost` antes de enviar credenciais ou dados de pedido.
+3. Se alguém digitar diretamente uma rota sensível em HTTP, o Nginx redireciona para HTTPS antes de encaminhar a requisição à aplicação.
+4. A jornada do pedido e APIs também ficam exclusivamente disponíveis através do proxy HTTPS. Isso evita enviar credenciais, endereços, dados da conta ou pedidos por HTTP; as páginas públicas continuam em HTTP.
+
+O certificado autoassinado é adequado apenas para a demonstração local. A entrega do tutorial exigida pela disciplina deve ser feita separadamente no Classroom.
+
+Como o certificado não é confiável publicamente, o navegador pode mostrar um aviso. Para verificar uma rota protegida sem desativar a validação, execute `curl.exe --cacert certs/server.crt https://localhost/login`. Não use este certificado local para um site público.
 
 Para parar os serviços locais:
 

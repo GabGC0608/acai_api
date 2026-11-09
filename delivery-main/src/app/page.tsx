@@ -9,6 +9,15 @@ export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
 
+  function navigateToSecurePage(path: string) {
+    // O ambiente da disciplina usa HTTP para páginas públicas e HTTPS para dados sensíveis.
+    if (window.location.protocol === "http:") {
+      window.location.assign(`https://${window.location.host}${path}`);
+      return;
+    }
+    router.push(path);
+  }
+
 
 
   return (
@@ -33,14 +42,14 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
-                onClick={() => router.push('/ui/pedido/tamanho')}
+                onClick={() => navigateToSecurePage('/ui/pedido/tamanho')}
                 className="bg-gradient-to-r from-purple-600 to-green-600 hover:from-purple-700 hover:to-green-700 text-white px-8 py-4 rounded-xl text-xl font-bold shadow-xl transition-all duration-300 transform hover:scale-105  z-20"
               >
                 Fazer Pedido
               </button>
               {!session && (
                 <button
-                  onClick={() => router.push('/login')}
+                  onClick={() => navigateToSecurePage('/login')}
                   className="bg-white hover:bg-gray-50 text-purple-600 px-8 py-4 rounded-xl text-xl font-bold shadow-xl border-2 border-purple-200 transition-all duration-300 transform hover:scale-105  z-20"
                 >
                   Entrar
@@ -85,10 +94,33 @@ export default function Home() {
             <h2 className="text-5xl font-bold mb-6">Pronto para se deliciar?</h2>
             <p className="text-2xl mb-12 opacity-90">Monte seu sorvete perfeito em apenas alguns cliques!</p>
             <button
-              onClick={() => router.push('/cliente/cadastro')}
+              onClick={() => navigateToSecurePage('/ui/cliente/cadastro')}
               className="bg-white text-purple-600 px-12 py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 hover:shadow-3xl"
             >
               Começar Agora
+            </button>
+          </div>
+        </section>
+
+        <section id="politica-seguranca" className="container mx-auto px-4 pb-20">
+          <div className="max-w-4xl mx-auto rounded-3xl bg-white/95 p-8 shadow-xl border border-purple-100">
+            <h2 className="text-3xl font-bold text-purple-700 mb-4">Política de Segurança</h2>
+            <p className="text-gray-700 mb-4">
+              A Açaí do Vale protege credenciais, dados de cadastro, endereços e informações de pedidos
+              usando HTTPS nas páginas e operações que transmitem esses dados. A página institucional e
+              o catálogo público permanecem em HTTP para atender ao escopo acadêmico deste projeto.
+            </p>
+            <p className="text-gray-700 mb-6">
+              No ambiente local de demonstração, o HTTPS usa certificado TLS autoassinado gerado com
+              OpenSSL. O navegador pode avisar que esse certificado não é confiável por uma autoridade
+              pública. A chave privada deve permanecer secreta, fora do repositório e acessível apenas
+              ao servidor. Não informe credenciais se a identidade do servidor não puder ser confirmada.
+            </p>
+            <button
+              onClick={() => navigateToSecurePage('/login')}
+              className="bg-purple-700 hover:bg-purple-800 text-white px-6 py-3 rounded-xl font-bold"
+            >
+              Acessar login seguro (HTTPS)
             </button>
           </div>
         </section>

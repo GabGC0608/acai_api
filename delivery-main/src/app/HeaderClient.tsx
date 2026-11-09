@@ -152,13 +152,13 @@ export default function HeaderClient() {
             ) : (
               <>
                 <button
-                  onClick={() => router.push("/login")}
+                  onClick={() => window.location.assign(`https://${window.location.host}/login`)}
                   className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all font-medium"
                 >
                   Entrar
                 </button>
                 <button
-                  onClick={() => router.push("/ui/cliente/cadastro")}
+                  onClick={() => window.location.assign(`https://${window.location.host}/ui/cliente/cadastro`)}
                   className="bg-white hover:bg-gray-100 text-purple-600 px-4 py-2 rounded-lg transition-all font-medium"
                 >
                   Cadastrar
@@ -294,7 +294,7 @@ export default function HeaderClient() {
                     <button
                       onClick={() => {
                         setMobileMenuOpen(false);
-                        router.push("/login");
+                        window.location.assign(`https://${window.location.host}/login`);
                       }}
                       className="w-full bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all font-medium"
                     >
@@ -303,7 +303,7 @@ export default function HeaderClient() {
                     <button
                       onClick={() => {
                         setMobileMenuOpen(false);
-                        router.push("/ui/cliente/cadastro");
+                        window.location.assign(`https://${window.location.host}/ui/cliente/cadastro`);
                       }}
                       className="w-full bg-white hover:bg-gray-100 text-purple-600 px-4 py-2 rounded-lg transition-all font-medium"
                     >
